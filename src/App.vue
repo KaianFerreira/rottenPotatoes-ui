@@ -1,85 +1,61 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div class="title">
+      Rotten Potatoes
+    </div>
+    <div class="actions">
+      <button
+        v-if="!user.isLogged"
+        @click="loginModalOpen = true"
+      >
+        Login
+      </button>
     </div>
   </header>
 
   <RouterView />
+  <LoginModal v-model="loginModalOpen"/>
 </template>
+<script>
+import { ref } from 'vue'
+import { useUserStore } from './stores/user'
+import LoginModal from './components/LoginModal.vue'
+export default {
+  components: {
+    LoginModal
+  },
+  setup() {
+    const userStore = useUserStore()
+    const loginModalOpen = ref(false)
+    return { userStore, loginModalOpen }
+  },
+  computed: {
+    user() {
+      return this.userStore
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
 
-<style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+  .title {
+    font-family: 'Island Moments' !important;
+    font-size: 3rem;
+    font-weight: bold;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
+  background-color: #eacf96;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  button {
+    padding: 1rem;
     font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+    font-weight: bold;
+    background-color: #96B4EB;
+    border: 1px solid #7C8596;
+    border-radius: 1rem;
+    cursor: pointer;
   }
 }
 </style>
