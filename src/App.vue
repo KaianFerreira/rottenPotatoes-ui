@@ -14,12 +14,13 @@
   </header>
 
   <RouterView />
-  <LoginModal v-model="loginModalOpen"/>
+  <LoginModal v-model:modelValue="loginModalOpen"/>
 </template>
 <script>
 import { ref } from 'vue'
 import { useUserStore } from './stores/user'
 import LoginModal from './components/LoginModal.vue'
+
 export default {
   components: {
     LoginModal
@@ -43,17 +44,23 @@ header {
     font-family: 'Island Moments' !important;
     font-size: 3rem;
     font-weight: bold;
+    color: #09cc77;
   }
-  background-color: #eacf96;
+  background-color: #2f2841;
   padding: 1rem;
   display: flex;
   justify-content: space-between;
   button {
     padding: 1rem;
     font-size: 1rem;
+    width: 150px;
     font-weight: bold;
-    background-color: #96B4EB;
+    background-color: #00ff88;
     border: 1px solid #7C8596;
+    color: #2b134b;
+    background: #00ff88;
+    cursor: pointer;
+    box-shadow: 0px 10px 40px -12px #00ff8052;
     border-radius: 1rem;
     cursor: pointer;
   }

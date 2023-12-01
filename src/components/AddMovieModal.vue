@@ -1,56 +1,76 @@
 <template>
-	<section class="modal" v-if="modelValue">
+	<section class="modal" v-if="open">
 		<div class="modal-content">
 			<div class="header">
 				<div class="title">
-					Login
+					Adicionar filme
 				</div>
 				<div class="close" @click="close()">x</div>
 			</div>
 			<div class="body">
 				<div class="form-input">
-					<div class="label">User name</div>
-					<input type="text" v-model="username">
+					<div class="label">Imagem</div>
+					<input type="text" v-model="imagem">
 				</div>
 				<div class="form-input">
-					<div class="label">Senha</div>
-					<input type="password" v-model="password">
+					<div class="label">Nome</div>
+					<input type="text" v-model="name">
+				</div>
+				<div class="form-input">
+					<div class="label">Sinopse</div>
+					<textarea v-model="synopsis"/>
 				</div>
 			</div>
 			<div class="actions">
-				<button class="primary" @click="login">Entrar</button>
+				<button class="secondary" @click="close()">cancelar</button>
+				<button class="primary" @click="save()">Salvar</button>
 			</div>
 		</div>
 	</section>
 </template>
 <script>
 
-import { signin } from '../api/user'
-import { useUserStore } from '../stores/user'
+import { save as saveMovie, updateMovie } from '../api/movie'
 export default {
 	props: {
-		modelValue: Boolean
+		open: Boolean,
+		reloadMovies: Function,
+		selectedMovie: Object
 	},
 	data: () => ({
-		username: '',
-		password: ''
+		imagem: '',
+		name: '',
+		synopsis: ''
+		
 	}),
-	emits: ["update:modelValue"],
+	watch: {
+		selectedMovie(value) {
+			if (value) {
+				this.$emit('update:open', true)
+				const { imagem, name, synopsis } = value
+				this.imagem = imagem
+				this.name = name,
+				this.synopsis = synopsis
+			}
+			
+		}
+	},
+	emits: ["update:open", "update:selectedMovie"],
 	methods: {
-
 		close () {
-			this.$emit('update:modelValue', false)
+			this.$emit('update:open', false)
+			this.$emit('update:selectedMovie', null)
 		},
-		async login() {
-			const userStore = useUserStore()
-			const validated = await signin(this.username, this.password)
-			userStore.setUser(validated)
+		async save() {
+			if (!this.selectedMovie) await saveMovie(this.imagem, this.name, this.synopsis)
+			else await updateMovie(this.selectedMovie.id, this.imagem, this.name, this.synopsis)
+			await this.reloadMovies()
 			this.close()
 		}
 	}
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .modal {
 	position: fixed;
 	top: 0;
@@ -74,7 +94,6 @@ export default {
 			font-weight: bold;
 			padding: 1rem;
 			color: #00ff88;
-			border-bottom: 1px soid rgb(205, 205, 205);
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
@@ -107,14 +126,19 @@ export default {
 				font-size: 1rem;
 				width: 150px;
 				font-weight: bold;
-				background-color: #00ff88;
-				border: 1px solid #7C8596;
-				color: #2b134b;
-				background: #00ff88;
-				cursor: pointer;
-				box-shadow: 0px 10px 40px -12px #00ff8052;
 				border-radius: 1rem;
+				border: none;
 				cursor: pointer;
+				&.primary {
+					color: #2b134b;
+					background-color: #00ff88;
+					box-shadow: 0px 10px 40px -12px #00ff8052;
+				}
+				&.secondary {
+					border: 1px solid #7C8596;
+					background-color: transparent;
+					color: #fff;
+				}
 			}
 		}
 	}
@@ -124,7 +148,11 @@ export default {
 		flex-direction: column;
 		gap: 8px;
 		color: white;
-		input {
+		textarea {
+			resize: none;
+			height: 150px;
+		}
+		input, textarea {
 			width: 100%;
 			border: none;
 			border-radius: 10px;

@@ -8,3 +8,7 @@
   font-family: 'Island Moments';
   src: url(./font/IslandMoments-Regular.ttf);
 }
+
+body {
+  background-color: #201b2c;
+}
