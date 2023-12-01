@@ -1,6 +1,6 @@
 <template>
 	<section class="modal" v-if="modelValue">
-		<div class="modal-content">
+		<div class="modal-content" v-if="mode === 'login'">
 			<div class="header">
 				<div class="title">
 					Login
@@ -16,16 +16,63 @@
 					<div class="label">Senha</div>
 					<input type="password" v-model="password">
 				</div>
+				<div class="signOn">
+					Não possui conta? <span @click="mode = 'register'">Cadastre-se</span>
+				</div>
+				<div class="error" v-show="error === 'validation'">
+					Credenciais inválidas
+				</div>
 			</div>
 			<div class="actions">
 				<button class="primary" @click="login">Entrar</button>
+			</div>
+		</div>
+		<div class="modal-content" v-else>
+			<div class="header">
+				<div class="title">
+					Login
+				</div>
+				<div class="close" @click="close()">x</div>
+			</div>
+			<div class="body">
+				<div class="form-input">
+					<div class="label">User name</div>
+					<input type="text" v-model="username">
+				</div>
+				<div class="form-input">
+					<div class="label">Nome</div>
+					<input type="text" v-model="name">
+				</div>
+				<div class="form-input">
+					<div class="label">Senha</div>
+					<input type="password" v-model="password">
+				</div>
+				<div class="form-input">
+					<div class="label">Email</div>
+					<input type="text" v-model="email">
+				</div>
+				<div class="form-input">
+					<div class="label">Idade</div>
+					<input type="number" v-model="age">
+				</div>
+				<div class="form-input">
+					<div class="label">Genêro</div>
+					<input type="text" v-model="gender">
+				</div>
+				<div class="signOn">
+					Possui conta? <span @click="mode = 'login'">Entrar</span>
+				</div>
+
+			</div>
+			<div class="actions">
+				<button class="primary" @click="register()">Cadastrar</button>
 			</div>
 		</div>
 	</section>
 </template>
 <script>
 
-import { signin } from '../api/user'
+import { signin, signOn } from '../api/user'
 import { useUserStore } from '../stores/user'
 export default {
 	props: {
@@ -33,24 +80,59 @@ export default {
 	},
 	data: () => ({
 		username: '',
-		password: ''
+		password: '',
+		age: '',
+		gender: '',
+		name: '',
+		email: '',
+		mode: 'login',
+		error: ''
 	}),
 	emits: ["update:modelValue"],
 	methods: {
-
+		resetFields(){
+			this.username = ''
+			this.password = ''
+			this.age = ''
+			this.gender = ''
+			this.name = ''
+			this.email = ''
+			this.mode = 'login'
+			this.error = ''
+		},
 		close () {
 			this.$emit('update:modelValue', false)
+			this.resetFields()
 		},
 		async login() {
+			try {
+				this.error = ''
+				const userStore = useUserStore()
+				const validated = await signin(this.username, this.password)
+				userStore.setUser(validated)
+				this.close()
+			} catch (error) {
+				if (error.response.status === 404) this.error = 'validation'
+			}
+		},
+		async register() {
 			const userStore = useUserStore()
-			const validated = await signin(this.username, this.password)
-			userStore.setUser(validated)
+			const user = await signOn(
+				this.username,
+				this.name,
+				this.password,
+				this.email,
+				this.age,
+				this.gender
+			)
+			userStore.setUser(user)
 			this.close()
 		}
 	}
 }
 </script>
 <style lang="scss" scoped>
+.error { color: red;}
 .modal {
 	position: fixed;
 	top: 0;
@@ -88,6 +170,12 @@ export default {
 				align-items: center;
 				height: 24px;
 				width: 24px;
+			}
+		}
+		.signOn {
+			color: #fff;
+			span {
+				cursor: pointer;
 			}
 		}
 		.body {

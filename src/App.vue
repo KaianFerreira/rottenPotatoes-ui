@@ -10,6 +10,9 @@
       >
         Login
       </button>
+      <div v-else class="user-name">
+        Seja bem vindo {{ user.data.name }}
+      </div>
     </div>
   </header>
 
@@ -32,7 +35,10 @@ export default {
   },
   computed: {
     user() {
-      return this.userStore
+      return { 
+        isLogged: this.userStore.isLogged,
+        data: this.userStore.user
+      }
     }
   }
 }
@@ -40,6 +46,14 @@ export default {
 <style lang="scss" scoped>
 
 header {
+  .actions {
+    display: flex;
+    align-items: center;
+    .user-name {
+      color: #fff;
+    }
+  }
+
   .title {
     font-family: 'Island Moments' !important;
     font-size: 3rem;
