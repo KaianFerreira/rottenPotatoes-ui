@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="title">
+    <div class="title" @click="$router.push('/')">
       Rotten Potatoes
     </div>
     <div class="actions">
@@ -44,6 +44,7 @@ header {
     font-family: 'Island Moments' !important;
     font-size: 3rem;
     font-weight: bold;
+    cursor: pointer;
     color: #09cc77;
   }
   background-color: #2f2841;

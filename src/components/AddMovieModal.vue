@@ -51,6 +51,10 @@ export default {
 				this.imagem = imagem
 				this.name = name,
 				this.synopsis = synopsis
+			} else {
+				this.imagem = null
+				this.name = null
+				this.synopsis = null
 			}
 			
 		}
