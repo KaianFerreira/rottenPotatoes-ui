@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div class="actions">
-				<button class="secondary" @click="close()">cancelar</button>
+				<button class="secondary" @click="close()">Cancelar</button>
 				<button class="primary" @click="save()">Salvar</button>
 			</div>
 		</div>
